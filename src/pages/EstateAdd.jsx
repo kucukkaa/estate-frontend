@@ -49,9 +49,22 @@ export default function EstateAdd() {
   };
 
   const [districts, setDistricts] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [estateTypies, setEstateTypies] = useState([]);
 
   useEffect(() => {
     let districtService = new DistrictService();
+    let cityService = new CityService();
+    let customerService = new CustomerService();
+    let estateTypeService = new EstateTypeService();
+    estateTypeService
+      .getEstateTypies()
+      .then((result) => setEstateTypies(result.data.data));
+    customerService
+      .getCustomers()
+      .then((result) => setCustomers(result.data.data));
+    cityService.getCities().then((result) => setCities(result.data.data));
     districtService
       .getDistricts()
       .then((result) => setDistricts(result.data.data));
@@ -62,6 +75,27 @@ export default function EstateAdd() {
     key: index,
     value: district.id,
     text: `${district.name}/${district.city.name}`,
+  }));
+
+  const cityOptions = cities.map((city, index) => ({
+    id: index,
+    key: index,
+    value: city.id,
+    text: city.name,
+  }));
+
+  const customerOptions = customers.map((customer, index) => ({
+    id: index,
+    key: index,
+    value: customer.id,
+    text: `${customer.firstName} ${customer.lastName}`,
+  }));
+
+  const estateTypeOptions = estateTypies.map((estateType, index) => ({
+    id: index,
+    key: index,
+    value: estateType.id,
+    text: estateType.name,
   }));
 
   const District = () => (
@@ -77,20 +111,6 @@ export default function EstateAdd() {
     />
   );
 
-  const [cities, setCities] = useState([]);
-
-  useEffect(() => {
-    let cityService = new CityService();
-    cityService.getCities().then((result) => setCities(result.data.data));
-  }, []);
-
-  const cityOptions = cities.map((city, index) => ({
-    id: index,
-    key: index,
-    value: city.id,
-    text: city.name,
-  }));
-
   const City = () => (
     <Dropdown
       clearable
@@ -104,22 +124,6 @@ export default function EstateAdd() {
     />
   );
 
-  const [customers, setCustomers] = useState([]);
-
-  useEffect(() => {
-    let customerService = new CustomerService();
-    customerService
-      .getCustomers()
-      .then((result) => setCustomers(result.data.data));
-  }, []);
-
-  const customerOptions = customers.map((customer, index) => ({
-    id: index,
-    key: index,
-    value: customer.id,
-    text: `${customer.firstName} ${customer.lastName}`,
-  }));
-
   const Customer = () => (
     <Dropdown
       clearable
@@ -132,22 +136,6 @@ export default function EstateAdd() {
       value={formik.values.customerId}
     />
   );
-
-  const [estateTypies, setEstateTypies] = useState([]);
-
-  useEffect(() => {
-    let estateTypeService = new EstateTypeService();
-    estateTypeService
-      .getEstateTypies()
-      .then((result) => setEstateTypies(result.data.data));
-  }, []);
-
-  const estateTypeOptions = estateTypies.map((estateType, index) => ({
-    id: index,
-    key: index,
-    value: estateType.id,
-    text: estateType.name,
-  }));
 
   const EstateType = () => (
     <Dropdown
